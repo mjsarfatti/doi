@@ -44,9 +44,6 @@ td.dc-table-column._4,
 td.dc-table-column._5,
 td.dc-table-column._6
 {text-align:left;}
-
-#mep_number {
-		margin-top: 0.1em;}
 </style>
 
 <meta name="twitter:card" content="summary" />
@@ -256,15 +253,15 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			return 1; });
 
 	var graph = dc.barChart (".country")   
-		.height(320)
+		.height(340)
 		.width(530)
 		.gap(0)
-		.margins({top: 10, right: 20, bottom: 200, left: 40})
+		.margins({top: 10, right: 0, bottom: 50, left: 35})
 		.x(d3.scale.ordinal())
 		.xUnits(dc.units.ordinal)
 		.elasticX(true)
 		.elasticY(true)
-		.yAxisLabel("Number of Meetings")
+		//.yAxisLabel("Number of Meetings")
 		.colorCalculator(function(d, i) {
 				return "#f85631";
 				})
@@ -313,7 +310,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		};
 
 		//var color = d3.scale.ordinal().domain([1, group.all().length]).range(['#C12E41','#009AAB','#579231', '#ECB005','#DB6A1F','#045B5C','#044B7D','#8C1456']);
-		var color = d3.scale.linear().domain([1, group.all().length]).range(['#C12E41','#009AAB','#579231', '#ECB005','#DB6A1F','#045B5C','#044B7D','#8C1456']);
+		var color = d3.scale.linear().domain([1, group.all().length]).range(['#3893d1','#cfecff']);
+		//TODO assign a color to a category
 
 		var chart = dc.pieChart(".main_category")
 			.innerRadius(50).radius(100)
@@ -903,9 +901,9 @@ function eventpopup (epid) {
 		
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li class="active" id="cm_tool_btn"><a href="ec.html"><strong>EU</strong> Commission <br />meetings</a></li>
-					<li id="bl_tool_btn"><a href="el.html"><strong>EU</strong> Brussels <br />lobbyist</a></li>
-					<li id="mi_tool_btn"><a href="ep.html"><strong>EU</strong> MEP <br />incomes</a></li>
+					<li id="cm_tool_btn"><a href="commission-meetings.html"><strong>EU</strong> Commission <br />meetings</a></li>
+					<li class="active" id="bl_tool_btn"><a href="brussels-lobbyist.html"><strong>EU</strong> Brussels <br />lobbyist</a></li>
+					<li id="mi_tool_btn"><a href="mep-incomes.html"><strong>EU</strong> MEP <br />incomes</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="about.html">About</a></li>
@@ -914,8 +912,8 @@ function eventpopup (epid) {
 			</div>
 	 </div><!-- container -->
 </nav>
-<div class="container_wrap cm_header" id="about_wrap_top">&nbsp;</div>
-<div class="container_wrap cm_header" id="about_wrap">
+<div class="container_wrap bl_header" id="about_wrap_top">&nbsp;</div>
+<div class="container_wrap bl_header" id="about_wrap">
 	<div class="container">
 		<div id="about_container" class="row">
 			<div class="col-md-3 col-lg-2" id="about_content_icon">
@@ -953,18 +951,18 @@ function eventpopup (epid) {
 <div class="container_wrap" id="toggle_about_wrap">
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-2 col-md-1 col-centered cm_collapse" id="collapse_about">
+			<div class="col-xs-2 col-md-1 col-centered bl_collapse" id="collapse_about">
 				<a class="opened" href="#">collapse</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="container_wrap" id="filter_wrap">
+<div class="container_wrap filter_bl" id="filter_wrap">
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
-				<p>Search or Filter:</p>
+				<p><strong>Click the graphs</strong> or <strong>use the field</strong> to search or filter:</p>
 				<div class="input-group">
 						<input type="text" id="search-input" class="form-control input-lg" placeholder="Filter by meeting name or organisation...">
 				</div>
@@ -972,19 +970,25 @@ function eventpopup (epid) {
 			<div class="col-sm-7 col-md-7" id="filter_numbers">
 				<div class="row">
 					<div class="col-md-2" id="currently_selected_text"><p>You have currently selected</p></div>
-					<div class="col-md-3 filter_number">
-						<div id="mep_number" class="dc-data-count">
-							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong> events
+					<div class="col-md-2 filter_number">
+						<div id="meetings_number" class="dc-data-count">
+							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong> meetings
 						</div>
 					</div>
-					<div class="col-md-3 filter_number">
+					<div class="col-md-2 filter_number">
 						<div id="org_number" class="org-count">
 							<span class="big_number filter-count"></span>out of <strong class="total-count"></strong> organisations
 						</div>
 					</div>
-					<div class="col-md-4 filter_number">
-						<div class="filter_long one2one"></div>
-						<div class="filter_long civilsociety">x% civil society?</div>
+					<div class="col-md-2 filter_number">
+						<div id="lobby_number" class="org-count">
+							<span class="big_number filter-count"></span>out of <strong class="total-count"></strong> lobbyst
+						</div>
+					</div>
+					<div class="col-md-2 filter_number">
+						<div id="lobby_budget" class="org-count">
+							<span class="big_number filter-count"></span>out of <strong class="total-count"></strong> budget
+						</div>
 					</div>
 				</div>
 			</div>
@@ -995,101 +999,59 @@ function eventpopup (epid) {
 	</div>
 </div>
 
-<div id="ec">
+<div id="el">
 	<div class="container_wrap" id="main_charts_wrap">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-6" id="ec_chart_container">
-					<h2>European Commission</h2>
-					<div class="row">
-						<div class="col-md-6 chart_box" id="hosttype">
-							<h3>Policy Level<!--span class="info">info</span--></h3>
-							<div class="hosttype"></div>
-							<div class="legend">
-								<div class="presidents">Presidents</div>
-								<div class="directors">Directors</div>
-								<div class="commisioner">Commisioner</div>
-								<div class="cabinet">Cabinet Members</div>
-								<br class="clear" />
-							</div>
-							<br class="clear" />
-						</div>
-						
-						<div class="col-md-6 chart_box">
-							<h3>Top 10 Ranking<!--span class="info">info</span--></h3>
-							<p>chart here</p>
-							<br class="clear" />
-						</div>
+				<div class="col-md-3">
+					<h3>Lobby spend</h3>
+					<div class="expense">
 					</div>
 				</div>
-				
-				<div class="col-md-6" id="lobbyst_chart_container">
-					<h2>Lobbyst</h2>
-					<div class="row">
-						<div class="col-md-6 chart_box" id="group_container">
-							<h3>Top organisations<!--span class="info">info</span--></h3>
-								<div class="guest chart-full"></div>
-								<div class="text-center label">Number of events</div>
-							<br class="clear" />
-						</div>
-						
-						<div class="col-md-6 chart_box" id="main_category">
-							<h3>Category of Lobby organisation</h3>
-							<div class="main_category"></div>
-							<div class="legend">
-								<div class="corporate">Corporate</div>
-								<div class="ngos">NGOs</div>
-								<div class="consultants">Consultants</div>
-								<div class="think">Think Tanks</div>
-								<div class="not_mentioned">Not mentioned</div>
-								<div class="think">Municipal</div>
-								<div class="think">Churches</div>
-								<br class="clear" />
-							</div>
-							<br class="clear" />
-						</div>
+				<div class="col-md-6" id="country_container">
+					<h3>Country</h3>
+					<div class="country">
 					</div>
+					<div class="label">Number of meetings</div>
+					<br class="clear" />
+				</div>
+				<div class="col-md-3">
+					<h3>Category of Lobby organisation</h3>
+					<div class="main_category"></div>
+					<div class="legend">
+						<div class="corporate">Corporate</div>
+						<div class="ngos">NGOs</div>
+						<div class="consultants">Consultants</div>
+						<div class="think">Think Tanks</div>
+						<div class="not_mentioned">Not mentioned</div>
+						<div class="think">Municipal</div>
+						<div class="think">Churches</div>
+						<br class="clear" />
+					</div>
+					<br class="clear" />
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-3 chart_box">
-					<h3>Portfolio<!--span class="info">info</span--></h3>
-					<div class="host chart-full"></div>
-					<br class="clear" />
+				<div class="col-md-3">
+					<h3>Staff</h3>
+					<p>chart here</p>
 				</div>
-				<div class="col-md-6 chart_box">
-					<h3>Word Cloud<!--span class="info">info</span--></h3>
+				<div class="col-md-6">
+					<h3>Cost/Meetings</h3>
+					<p>chart here</p>
 				</div>
-				<div class="col-md-3 chart_box">
-					<h3>Sector of Lobby organisation<!--span class="info">info</span--></h3>
-					<div class="sector range chart-full"></div>
-					<br class="clear" />
+				<div class="col-md-3">
+					<h3>Sector</h3>
+					<p>chart here</p>
 				</div>
 			</div>
 		</div>
 	</div>
 	
 	<div class="container_wrap" id="hidden_charts_wrap" style="display: none;">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-7 chart_box">
-					<h3>Lobbying expense</h3>
-					
-					<div class="expense">
-					</div>
-					
-				</div>
-			</div>
-		</div>
+
 		<div class="row">
-			<div class="col-md-7 chart_box">
-				<h3>Country</h3>
-				
-				<div class="country">
-				</div>
-				
-				<br class="clear" />
-			</div>
+			
 			<div class="col-md-5 chart_box">
 				<h3>Date</h3>
 				<div class="date">
@@ -1105,7 +1067,8 @@ function eventpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="content" id="list_content">
-				<h2>Latest 100 meetings in the commission</h2>
+				<h2 class="table_title">Latest 100 meetings in the commission</h2><div id="last_update">Last updated: 11 March 2015</div>
+				
 				<div class="info_chart" id="subject_info">
 					<span class="info">info</span>
 					<p class="desc">Events</p>

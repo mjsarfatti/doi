@@ -6,6 +6,7 @@
 
 
 /* GENERIC ELEMENTS */
+
 body {
    font-family: 'Neue Helvetica 55 Roman', "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif!important; 
    /* on TI website there is in use the fonts.com helvetica */
@@ -36,17 +37,31 @@ h3{
 	margin-bottom: 1em;
 	position: relative;
 	font-size: 1.2em;
+	font-weight: bold;
+}
+
+a{
+	-webkit-transition: all .15s ease-out 0s;	
+	-moz-transition: all .15s ease-out 0s;
+	transition: all .15s ease-out 0s;
+}
+
+svg path, svg rect{
+	cursor: pointer;
 }
 
 .label{
 	color: #5d5d5d;
 	font-weight: normal;
 	padding: 0;
+	display: block;
+	text-align: left;
 }
 
 .info_chart{
 	position: absolute;
-	top: 0;
+	top: -20px;
+	right: 15px;
 	padding-right: 15px;
 	padding-left: 15px;
 	margin-left: -30px;
@@ -75,11 +90,20 @@ h3{
 
 #list_content h2{
 	margin-bottom: .5em;
+	display: inline-block;
+	width: 50%;
+}
+
+#last_update{
+	margin-bottom: .5em;
+	display: inline-block;
+	text-align: right;
+	width: 50%;
 }
 
 #list_content .info_chart{
 	z-index: 1000;
-	top: 8px;
+	top: 28px;
 }
 
 #attendance_info{
@@ -235,6 +259,10 @@ ul.nav.navbar-right li.active a{
 		height: 80px;
 		width: 140px;
 		border-right: 1px solid rgba(0,0,0,.1);
+	}
+	
+	.navbar .navbar-nav > li > a:hover{
+		background: rgba(0, 0, 0, .1);
 	}
 	
 	.nav li#mi_tool_btn.active a{
@@ -445,10 +473,21 @@ ul.nav.navbar-right li.active a{
 	padding: 0;
 	width: 100%;
 	color: #FFF;
-	border-top: 1px solid #2078b5;
 	position: fixed;
 	bottom: 0;
 	z-index: 9999;
+}
+
+#filter_wrap.filter_cm{
+	background: #0f4c79;
+}
+
+#filter_wrap.filter_bl{
+	background: #8d1656;
+}
+
+#filter_wrap.filter_mi{
+	background: #2c9aaa;
 }
 
 #filter_wrap #filter_field_container{
@@ -463,7 +502,7 @@ ul.nav.navbar-right li.active a{
 	white-space: normal;
 	display: block;
 	line-height: 1em;
-	color: #cfecff;
+	color: #FFF;
 }
 
 #filter_wrap input#search-input{
@@ -472,7 +511,7 @@ ul.nav.navbar-right li.active a{
 	height: 33px;
 	padding: 0 .3em 0 0;
 	margin-bottom: 8px;
-	border-bottom: 1px solid #2180c2;
+	border-bottom: 1px solid rgba(0,0,0,.7);
 	font-size: 1.1em;
 }
 
@@ -512,12 +551,11 @@ ul.nav.navbar-right li.active a{
 #filter_numbers p{
 	margin-bottom: 0;
 	line-height: 1.2em;
-	color: #cfecff;
 }
 
 #filter_numbers{
 	display: none;
-	color: #cfecff;
+	color: #FFF;
 }
 
 @media only screen and (min-width : 768px) {
@@ -528,6 +566,7 @@ ul.nav.navbar-right li.active a{
 	#filter_wrap{
 		height: 8.5vh;
 		min-height: 80px;
+		box-shadow: 0px -10px 10px #FFF;
 	}
 	
 	#filter_wrap #filter_field_container p{
@@ -552,11 +591,11 @@ ul.nav.navbar-right li.active a{
 		margin-top: 0;
 		padding: 20px .5em 0;
 		width: 100%;
-		background: #125686 url(../img/reset.svg) center 7% no-repeat;
+		background: rgba(0, 0, 0,.3) url(../img/reset.svg) center 7% no-repeat;
 	}
 	
 	#filter_wrap .btn:hover{
-		background: url(../img/reset.svg) center 7% no-repeat #146298;
+		background: rgba(0, 0, 0,.4) url(../img/reset.svg) center 7% no-repeat;
 	}
 	
 	
@@ -578,6 +617,7 @@ ul.nav.navbar-right li.active a{
 		display: block;
 		margin-top: 16px;
 		color: #FFF;
+		font-weight: bold;
 	}
 	
 	#filter_wrap .filter_number{
@@ -786,7 +826,6 @@ ul.nav.navbar-right li.active a{
 }
 
 div.dc-chart{
-	width: 70%;
 	line-height: 1em;
 }
 
@@ -964,13 +1003,20 @@ div.dc-chart g.row text {fill:black}
 
 /* LOBBY */
 
-#ec_chart_container{
-	margin-top: 2em;
-	border-right: 1px solid #ccc;
+#lobbyst_chart_container{
+	border-left: 1px solid #ccc;
 }
 
-#ec_chart_container h2{
+#lobbyst_chart_container,#ec_chart_container{
+	margin-top: 2em;
+}
+
+#ec_chart_container h2, #lobbyst_chart_container h2{
 	margin-top: 0;
+}
+
+#lobbyst_chart_container h2{
+	text-align: right;
 }
 
 /* hosttype */
@@ -981,19 +1027,19 @@ div.dc-chart g.row text {fill:black}
 
 /* legend */
 .legend div.presidents:before{
-	background: #b4c9d8;
+	background: #054c7d;
 }
 
 .legend div.directors:before{
-	background: #78a0ba;
+	background: #3793d1;
 }
 
-.legend div.commisioner:before{
-	background: #3e759b;
+.legend div.commissioner:before{
+	background: #84c0e8;
 }
 
 .legend div.cabinet:before{
-	background: #0d4b7c;
+	background: #cfebff;
 }
 
 #hosttype .legend div{
@@ -1005,4 +1051,21 @@ div.dc-chart g.row text {fill:black}
 .main_category.dc-chart{
 	width: auto;
 	float: none;
+}
+
+/* country */
+.country{
+	width: 100%;
+}
+
+#country_container{
+	position: relative;
+}
+
+#country_container .label{
+	-webkit-transform: rotate(-90deg);
+	left: 5.9em;
+	position: absolute;
+	top: 165px;
+	width: 0px;
 }

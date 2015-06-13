@@ -717,9 +717,9 @@ function MEPpopup (epid) {
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li id="cm_tool_btn"><a href="ec.html"><strong>EU</strong> Commission <br />meetings</a></li>
-					<li id="bl_tool_btn"><a href="el.html"><strong>EU</strong> Brussels <br />lobbyist</a></li>
-					<li class="active" id="mi_tool_btn"><a href="ep.html"><strong>EU</strong> MEP <br />incomes</a></li>
+					<li id="cm_tool_btn"><a href="commission-meetings.html"><strong>EU</strong> Commission <br />meetings</a></li>
+					<li id="bl_tool_btn"><a href="brussels-lobbyist.html"><strong>EU</strong> Brussels <br />lobbyist</a></li>
+					<li class="active" id="mi_tool_btn"><a href="mep-incomes.html"><strong>EU</strong> MEP <br />incomes</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="about.html">About</a></li>
@@ -773,11 +773,11 @@ function MEPpopup (epid) {
 	</div>
 </div>
 
-<div class="container_wrap" id="filter_wrap">
+<div class="container_wrap filter_mi" id="filter_wrap">
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
-				<p>Search or Filter:</p>
+				<p><strong>Click the graphs</strong> or <strong>use the field</strong> to search or filter:</p>
 				<div class="input-group">
 						<input type="text" id="search-input" class="form-control input-lg" placeholder="MEP name, national party, EP committee...">
 				</div>
@@ -925,7 +925,8 @@ function MEPpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="content" id="list_content">
-				<h2>MEPs</h2>
+				<h2 class="table_title">MEPs</h2><div id="last_update">Last updated: 11 March 2015</div>
+				
 				<div class="info_chart" id="attendance_info">
 					<span class="info">info</span>
 					<p class="desc">Participation in plenary roll-call votes</p>
@@ -959,7 +960,6 @@ function MEPpopup (epid) {
 			</div>
 		</div>
 		
-		<div id="last_update">Last updated: 11 March 2015</div>
 	</div>
 </div>
 
