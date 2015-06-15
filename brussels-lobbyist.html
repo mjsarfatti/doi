@@ -263,12 +263,11 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		.elasticY(true)
 		//.yAxisLabel("Number of Meetings")
 		.colorCalculator(function(d, i) {
-				return "#f85631";
-				})
+			return "#f85631";
+			})
 		.dimension(dim)
 		.group(group)
 		.on("postRender", function(c) {
-				
 				rotateBarChartLabels(c);} )
 		.yAxis().ticks(4).tickFormat(d3.format(",.0f"));
 	}
@@ -310,7 +309,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		};
 
 		//var color = d3.scale.ordinal().domain([1, group.all().length]).range(['#C12E41','#009AAB','#579231', '#ECB005','#DB6A1F','#045B5C','#044B7D','#8C1456']);
-		var color = d3.scale.linear().domain([1, group.all().length]).range(['#3893d1','#cfecff']);
+		var color = d3.scale.ordinal().domain([1, group.all().length]).range(['#ecb007', '#e79c0e','#e48917','#de761f',"#b75f1a","#914913","#6b320c"]);
 		//TODO assign a color to a category
 
 		var chart = dc.pieChart(".main_category")

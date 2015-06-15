@@ -312,19 +312,30 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			}
 		};
 
-		//var color = d3.scale.ordinal().domain([1, group.all().length]).range(['#C12E41','#009AAB','#579231', '#ECB005','#DB6A1F','#045B5C','#044B7D','#8C1456']);
-		var color = d3.scale.ordinal().domain([1, group.all().length]).range(['#ecb007', '#e79c0e','#e48917','#de761f',"#b75f1a","#914913","#6b320c"]);
-		//TODO assign a color to a category
-
+		
+		var lobby_category_colors = { //please note that Think tanks and churches have an extra space at the end of the string
+			"Corporate":"#f3cc62",
+			"Consultants":"#ecb007",
+			"NGOs":"#e59215",
+			"Think tanks ":"#de761f",
+			"Municipal":"#a55417",
+			"Churches ":"#6b320c",
+			"Not mentioned":"#c5c5c5",
+			"Not registered":"#e5e5e5",
+			"Unknown":"#f5f5f5"
+		}
+		
+		
 		var chart = dc.pieChart(".main_category")
 			.innerRadius(50).radius(100)
 			.height(200)
 			.label(function(d){ return d.key[1]; })
-			.minAngleForLabel(0.25)
+			.minAngleForLabel(0.30)
 			.dimension(dim)
 			.group(group)
-			.colors(color)
-			.colorAccessor(function(d, i) { return (i+1) })
+			.colorCalculator(function(d, i) {
+				return lobby_category_colors[d.key[1]];
+			})
 			.ordering(function(d) { return -d.value; });
 	}
 
@@ -333,7 +344,6 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			if (!d.guestid){
 				if (d.unregistered == "")
 					return "Not mentioned";
-
 				return "Not registered";
 			}
 			if (!representatives[d.guestid])
@@ -349,7 +359,28 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			 group.all().forEach (function (d) {if (d.key[0]) t[d.key[0]]=d.key[1]})
 			 JSON.stringify(t);
 		*/
-
+	
+	var lobby_sector_colors = {	
+		
+		
+		"Companies & groups":"#f3cc62",//Corporate
+		"Trade and business associations":"#f3cc62",//Corporate
+		"Law firms":"#ecb007",//Consultants
+		"Professional consultancies":"#ecb007",//Consultants
+		"Self-employed consultants":"#ecb007",//Consultants
+		"Non-governmental organisations, platforms and networks and similar":"#e59215",//NGOs
+		"Think tanks and research institutions":"#de761f",//Think tanks
+		"Organisations representing churches and religious communities":"#6b320c",//Churches
+		"Local, regional and municipal authorities (at sub-national level)":"#a55417",//Municipal
+		//TODO to be placed
+		"Other organisations":"#e59215",
+		"Academic institutions":"#ECB005",
+		"Other public or mixed entities, etc.":"#ECB005",
+		"Not mentioned":"#c5c5c5",
+		"Not registered":"#e5e5e5",
+		"Unknown":"#f5f5f5"
+	}
+	
 	var graph = dc.rowChart (".sector")   
 		.height(500)
 		//.width(350)
@@ -362,10 +393,16 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			 return d.key[1]; 
 		})
 		.elasticX(true)
+		
 		.colorCalculator(function(d, i) {
-			if (d.key == "Not mentioned" || d.key == "Unknown" || d.key == "Not registered")
-				return "lightblue";
-			return "#ECB005";
+			var k;
+			if (typeof d.key == "string"){
+				 k = d.key;
+			}else{
+				k = d.key[1];
+			} 
+			console.log(k)
+			return lobby_sector_colors[k];
 		})
 		.dimension(dim)
 		.group(group)
@@ -1062,12 +1099,14 @@ function eventpopup (epid) {
 							<div class="main_category"></div>
 							<div class="legend">
 								<div class="corporate">Corporate</div>
-								<div class="ngos">NGOs</div>
 								<div class="consultants">Consultants</div>
+								<div class="ngos">NGOs</div>
 								<div class="think">Think Tanks</div>
+								<div class="municipal">Municipal</div>
+								<div class="churches">Churches</div>
 								<div class="not_mentioned">Not mentioned</div>
-								<div class="think">Municipal</div>
-								<div class="think">Churches</div>
+								<div class="not_registered">Not registered</div>
+								<div class="unknown">Unknown</div>
 								<br class="clear" />
 							</div>
 							<br class="clear" />
@@ -1080,7 +1119,11 @@ function eventpopup (epid) {
 					<h3>Portfolio<!--span class="info">info</span--></h3>
 					<div class="host chart-full"></div>
 					<div class="label">Number of events</div>
-					<br class="clear" />
+					<div class="legend" id="portfolio_legend">
+						<div class="presidents">Presidents and Vice-presidents activities</div>
+						<div class="directors">Other</div>
+						<br class="clear" />
+					</div>
 				</div>
 				<div class="col-md-6 chart_box">
 					<h3>Word Cloud<!--span class="info">info</span--></h3>

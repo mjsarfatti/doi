@@ -1069,3 +1069,38 @@ div.dc-chart g.row text {fill:black}
 	top: 165px;
 	width: 0px;
 }
+
+/*portfolio legend*/
+#portfolio_legend div{
+	margin-left: 0;
+	width: 100%;
+}
+
+/*category lobby legend*/
+.legend div.corporate:before{
+	background: #f3cc62;
+}
+.legend div.ngos:before{
+	background: #e59215;
+}
+.legend div.consultants:before{
+	background: #ecb007;
+}
+.legend div.think:before{
+	background: #de761f;
+}
+.legend div.municipal:before{
+	background: #a55417;
+}
+.legend div.churches:before{
+	background: #6b320c;
+}
+.legend div.not_mentioned:before{
+	background: #c5c5c5;
+}
+.legend div.not_registered:before{
+	background: #e5e5e5;
+}
+.legend div.unknown:before{
+	background: #f5f5f5;
+}

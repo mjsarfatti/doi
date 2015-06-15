@@ -308,6 +308,17 @@ div.dc-chart {
     cursor: pointer;
 }
 
+svg g g.pie-slice.selected path{
+	stroke: #FFF;
+	stroke-width: 1px;
+}
+
+svg g g.pie-slice.deselected path{
+	stroke: #FFF;
+	opacity: .3;
+	stroke-width: .5px;
+}
+
 /* lobby */
 .guest.dc-chart g.row rect, .host.dc-chart g.row rect, .sector.dc-chart g.row rect{
     fill-opacity: 1;
