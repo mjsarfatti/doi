@@ -1003,19 +1003,19 @@ div.dc-chart g.row text {fill:black}
 
 /* LOBBY */
 
-#lobbyst_chart_container{
+#lobbyist_chart_container{
 	border-left: 1px solid #ccc;
 }
 
-#lobbyst_chart_container,#ec_chart_container{
+#lobbyist_chart_container,#ec_chart_container{
 	margin-top: 2em;
 }
 
-#ec_chart_container h2, #lobbyst_chart_container h2{
+#ec_chart_container h2, #lobbyist_chart_container h2{
 	margin-top: 0;
 }
 
-#lobbyst_chart_container h2{
+#lobbyist_chart_container h2{
 	text-align: right;
 }
 
