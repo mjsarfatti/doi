@@ -293,6 +293,14 @@ div.dc-chart {
     opacity: .5;
 }
 
+.dc-chart g rect.deselected {
+    fill: #ccc;
+}
+
+.dc-chart g rect.deselected  {
+    opacity: .5;
+}
+
 .dc-chart .symbol{
     stroke: none;
 }

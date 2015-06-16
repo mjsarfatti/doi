@@ -1027,19 +1027,19 @@ div.dc-chart g.row text {fill:black}
 
 /* legend */
 .legend div.presidents:before{
-	background: #054c7d;
+	background: #123c81;
 }
 
 .legend div.directors:before{
-	background: #3793d1;
+	background: #2163ad;
 }
 
 .legend div.commissioner:before{
-	background: #84c0e8;
+	background: #3793d1;
 }
 
 .legend div.cabinet:before{
-	background: #cfebff;
+	background: #84c0e8;
 }
 
 #hosttype .legend div{
@@ -1078,22 +1078,22 @@ div.dc-chart g.row text {fill:black}
 
 /*category lobby legend*/
 .legend div.corporate:before{
-	background: #f3cc62;
+	background: #cf270e;
 }
 .legend div.ngos:before{
-	background: #e59215;
+	background: #fcc803;
 }
 .legend div.consultants:before{
-	background: #ecb007;
+	background: #d84518;
 }
 .legend div.think:before{
-	background: #de761f;
+	background: #de631f;
 }
 .legend div.municipal:before{
-	background: #a55417;
+	background: #ef9d13;
 }
 .legend div.churches:before{
-	background: #6b320c;
+	background: #fee482;
 }
 .legend div.not_mentioned:before{
 	background: #c5c5c5;
