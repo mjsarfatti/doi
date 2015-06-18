@@ -566,7 +566,7 @@ ul.nav.navbar-right li.active a{
 	#filter_wrap{
 		height: 8.5vh;
 		min-height: 80px;
-		box-shadow: 0px -10px 10px #FFF;
+		box-shadow: 0px -3px 0px rgba(0,0,0,.1);
 	}
 	
 	#filter_wrap #filter_field_container p{
