@@ -1107,3 +1107,7 @@ div.dc-chart g.row text {fill:black}
 .legend div.deregistered:before{
 	background: #f2f2f2;
 }
+
+
+.btn-sm {padding:8px 15px;}
+
