@@ -369,18 +369,18 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	}
 	
 	var graph = dc.rowChart (".sector")   
-		.height(380)
-		.width(350)
-		.gap(1)
-		.margins({top: 0, right: 0, bottom: 0, left: 0})
+		.height(500)
+		//.width(350)
+		.gap(2)
+		.margins({top: 0, right: 5, bottom: 20, left: 5})
 		.x(d3.scale.ordinal())
 			.label(function(d){ return subCategories[d.key] })
 			.title (function(d){ return subCategories[d.key] +" "+d.value })
 		.elasticX(true)
 		.colorCalculator(function(d, i) {
 			if (d.key == "Not mentioned" || d.key == "Unknown" || d.key == "Not registered")
-				return "lightblue";
-			return "#f85631";
+				return "#cccccc";
+			return "#ecb005";
 		})
 		.dimension(dim)
 		.group(group)
@@ -678,18 +678,18 @@ function eventpopup (epid) {
 <div class="container_wrap" id="toggle_about_wrap">
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-2 col-md-1 col-centered cm_collapse" id="collapse_about">
+			<div class="col-xs-2 col-md-1 col-centered bl_collapse" id="collapse_about">
 				<a class="opened" href="#">collapse</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="container_wrap" id="filter_wrap">
+<div class="container_wrap filter_bl" id="filter_wrap">
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
-				<p>Search or Filter:</p>
+				<p><strong>Click the graphs</strong> or <strong>use the field</strong> to search or filter:</p>
 				<div class="input-group">
 						<input type="text" id="search-input" class="form-control input-lg" placeholder="type a name ...">
 				</div>
