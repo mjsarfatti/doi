@@ -155,13 +155,14 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	drawSector();
 	drawExpense();
 	drawNbMeetings();
+	drawNbBadges();
+	drawCountry();
 /*	drawDate();
 	drawMeetings();
 	drawWeekDay();
 	drawHost();
 	drawHostType();
 	drawGuest();
-	drawCountry();
   	drawScore();
 	drawParty();
 	drawRange();
@@ -233,9 +234,9 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 	function drawCountry () {
 	var dim = ndx.dimension (function(d) {
-			if (!representatives[d.guestid])
-				return "unknown";
-			return representatives[d.guestid].contact_country;
+		if (!representatives[d.guestid])
+			return "unknown";
+		return representatives[d.guestid].contact_country;
 	});
 
 	var group   = dim.group().reduceSum(function(d) {   
@@ -254,8 +255,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		.elasticY(true)
 		.yAxisLabel("Number of Meetings")
 		.colorCalculator(function(d, i) {
-				return "#f85631";
-				})
+			return "#ecb005";
+			})
 		.dimension(dim)
 		.group(group)
 		.on("postRender", function(c) {
@@ -293,6 +294,75 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
              break;
            default:
              return d.key + " meetings: " + d.value;
+         }
+       })
+			.dimension(dim)
+			.group(group);
+	}
+	
+	function drawNbBadges () {
+		var dim = ndx.dimension (function(d) {
+        if (!d.accredited) return 0;
+        if (d.accredited>4)
+          return 5;
+			  return d.accredited;
+		});
+
+		var group   = dim.group().reduceSum(function(d) {   return 1; });
+
+		var chart = dc.pieChart(".accreditations")
+			.innerRadius(50).radius(100)
+			.height(200)
+			.label(function(d){ 
+          if (d.key == 5)
+            return ">5";
+          return d.key })
+			.title (function(d){ 
+         switch(d.key) {
+           case 0:
+             return "no accreditation";
+           case 1:
+             return d.key + " accreditation: " + d.value;
+             break;
+           case 5:
+             return ">5 accreditations: " + d.value;
+             break;
+           default:
+             return d.key + " accreditations: " + d.value;
+         }
+       })
+			.dimension(dim)
+			.group(group);
+	}
+	
+	function drawNbLobbyists () {
+		var dim = ndx.dimension (function(d) {
+        if (d.fte>4)
+          return 5;
+			  return d.fte;
+		});
+
+		var group   = dim.group().reduceSum(function(d) {   return 1; });
+
+		var chart = dc.pieChart(".nblobbyists")
+			.innerRadius(50).radius(100)
+			.height(200)
+			.label(function(d){ 
+          if (d.key == 5)
+            return ">5";
+          return d.key })
+			.title (function(d){ 
+         switch(d.key) {
+           case 0:
+             return "no staff";
+           case 1:
+             return d.key + " staff: " + d.value;
+             break;
+           case 5:
+             return ">5 staff: " + d.value;
+             break;
+           default:
+             return d.key + " staffs: " + d.value;
          }
        })
 			.dimension(dim)
@@ -647,10 +717,8 @@ function eventpopup (epid) {
 			</div>
 			<div class="col-md-6 col-lg-7" id="about_content">
 				<p>
-					EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the activities of the commissionners and cabinet members in the European Commission.members of the European Parliament. By simply clicking on the graphs or the list below users can rank, sort and filter events.
-					<br/>
-					<a href="about.html" class="more">Read more</a>
-				</p>
+					EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the activities of the commissionners and cabinet members in the European Commission.members of the European Parliament.<br /><a href="about.html" class="more">Read more</a></p>
+					<p>By simply clicking on the graphs or the list below users can rank, sort and filter events.</p>
 			</div>
 			<div class="col-md-3" id="about_social">
 				<br/>
@@ -689,14 +757,14 @@ function eventpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
-				<p><strong>Click the graphs</strong> or <strong>use the field</strong> to search or filter:</p>
+				<p>Search or filter:</p>
 				<div class="input-group">
-						<input type="text" id="search-input" class="form-control input-lg" placeholder="type a name ...">
+						<input type="text" id="search-input" class="form-control input-lg" placeholder="Filter by Lobbyist, Host, Subject…">
 				</div>
 			</div>
 			<div class="col-sm-7 col-md-7" id="filter_numbers">
 				<div class="row">
-					<div class="col-md-2" id="currently_selected_text"><p>You have currently selected</p></div>
+					<div class="col-md-2" id="currently_selected_text"><p>Currently selected:</p></div>
 					<div class="col-md-3 filter_number">
 						<div id="mep_number" class="dc-data-count">
 							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong> organisations
@@ -720,15 +788,8 @@ function eventpopup (epid) {
 		<div class="container">
 			<div class="row">
 				<div class="col-md-3 chart_box" id="hosttype">
-					<h3>Policy Level<!--span class="info">info</span--></h3>
-					<div class="hosttype"></div>
-					<div class="legend">
-						<div class="presidents">Presidents</div>
-						<div class="directors">Directors</div>
-						<div class="commissioner">Commissioner</div>
-						<div class="cabinet">Cabinet Members</div>
-						<br class="clear" />
-					</div>
+					<h3>Accreditation<!--span class="info">info</span--></h3>
+					<div class="accreditations"></div>
 					<br class="clear" />
 				</div>
 				<div class="col-md-6 chart_box">

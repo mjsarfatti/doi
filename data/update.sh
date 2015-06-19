@@ -1,8 +1,8 @@
 #http://harelba.github.io/q/install.html
 
 #country
-echo 'id,name' > country.csv
-jq -M ".[]|[.id,.name]|@csv" ../country.json >> country.csv
+
+csvcut -c id,code,name country-data.csv > country.csv
 
 #dealing with meeting_participants.csv
 q 'select meeting.id as id,"registered" as status ,"" as guest, meeting.ec_representative as host,meeting.ec_org as cabinet,meeting.date as date,representative_id as guestid,meeting.subject as title,meeting.unregistered as unregistered, "0" as nb  from  meeting.csv meeting join meeting_participants.csv guest on (meeting.id = guest.meeting_id) where meeting.status="active"' -d, -H -O > meeting_flat.csv
@@ -32,7 +32,7 @@ csvcut -c id,status,guest,host,cabinet,date,guestid,title,unregistered,participa
 echo 'id,contact_country,sub_category,sub_category_title,acronym,name,main_category,main_category_title,code,fte' >  representative.csv
 jq -r '.[]|select(.status=="active")|[.id,.contact_country,.sub_category,.sub_category_title,.acronym,.name,.main_category,.main_category_title,.identification_code,.members_fte]|@csv' representative.json >> representative.csv
 
-exit
+#exit
 
 #meeting
 #sed -i 's/T00:00:00//g' meeting-flat.json 

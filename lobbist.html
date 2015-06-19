@@ -155,13 +155,15 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	drawSector();
 	drawExpense();
 	drawNbMeetings();
+	drawNbLobbyists();
+  drawNbBadges();
+	drawCountry();
 /*	drawDate();
 	drawMeetings();
 	drawWeekDay();
 	drawHost();
 	drawHostType();
 	drawGuest();
-	drawCountry();
   drawScore();
 	drawParty();
 	drawRange();
@@ -173,6 +175,42 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 				.attr("transform", function(d) { return "rotate(-45, -4, 9) "; });
 
 		}
+
+	function drawCountry () {
+	var dim = ndx.dimension (function(d) {
+			return countries[d.contact_country][1];
+	});
+
+	var group   = dim.group().reduceSum(function(d) {   
+			return 1; });
+
+		var filteredGroup = (function(source_group) {
+			return {
+				all: function() {
+					return source_group.top(10).filter(function(d) {
+						return (d.key != "Not mentioned" && d.value != 0);
+					});
+				}
+			};
+      })(dim.group().reduceSum(function(d) {return 1; }));
+
+		var graph = dc.rowChart(".country")   
+			.margins({top: 0, right: 3, bottom: 20, left: 3})
+			.height(240)
+			.width(300)
+			.gap(1)
+      .fixedBarHeight(20)
+			.x(d3.scale.ordinal())
+			.elasticX(true)
+			.colorCalculator(function(d, i) {
+				return "#f85631";
+			})
+			.ordering(function(d){return -d.value})
+			.dimension(dim)
+			.group(filteredGroup);
+
+	}
+
 
 
 	function drawExpense () {
@@ -231,39 +269,6 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		graph.yAxis().ticks(3).tickFormat(d3.format(",.0f"));
 	}
 
-	function drawCountry () {
-	var dim = ndx.dimension (function(d) {
-			if (!representatives[d.guestid])
-				return "unknown";
-			return representatives[d.guestid].contact_country;
-	});
-
-	var group   = dim.group().reduceSum(function(d) {   
-				if (d.key == "108")
-					return 0;
-			return 1; });
-
-	var graph = dc.barChart (".country")   
-		.height(320)
-		.width(530)
-		.gap(0)
-		.margins({top: 10, right: 20, bottom: 200, left: 40})
-		.x(d3.scale.ordinal())
-		.xUnits(dc.units.ordinal)
-		.elasticX(true)
-		.elasticY(true)
-		.yAxisLabel("Number of Meetings")
-		.colorCalculator(function(d, i) {
-				return "#f85631";
-				})
-		.dimension(dim)
-		.group(group)
-		.on("postRender", function(c) {
-				
-				rotateBarChartLabels(c);} )
-		.yAxis().ticks(4).tickFormat(d3.format(",.0f"));
-	}
-
 	
 	function drawNbMeetings () {
 		var dim = ndx.dimension (function(d) {
@@ -293,6 +298,75 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
              break;
            default:
              return d.key + " meetings: " + d.value;
+         }
+       })
+			.dimension(dim)
+			.group(group);
+	}
+
+	function drawNbBadges () {
+		var dim = ndx.dimension (function(d) {
+        if (!d.accredited) return 0;
+        if (d.accredited>4)
+          return 5;
+			  return d.accredited;
+		});
+
+		var group   = dim.group().reduceSum(function(d) {   return 1; });
+
+		var chart = dc.pieChart(".accreditations")
+			.innerRadius(50).radius(100)
+			.height(200)
+			.label(function(d){ 
+          if (d.key == 5)
+            return ">5";
+          return d.key })
+			.title (function(d){ 
+         switch(d.key) {
+           case 0:
+             return "no accreditation";
+           case 1:
+             return d.key + " accreditation: " + d.value;
+             break;
+           case 5:
+             return ">5 accreditations: " + d.value;
+             break;
+           default:
+             return d.key + " accreditations: " + d.value;
+         }
+       })
+			.dimension(dim)
+			.group(group);
+	}
+
+	function drawNbLobbyists () {
+		var dim = ndx.dimension (function(d) {
+        if (d.fte>4)
+          return 5;
+			  return d.fte;
+		});
+
+		var group   = dim.group().reduceSum(function(d) {   return 1; });
+
+		var chart = dc.pieChart(".nblobbyists")
+			.innerRadius(50).radius(100)
+			.height(200)
+			.label(function(d){ 
+          if (d.key == 5)
+            return ">5";
+          return d.key })
+			.title (function(d){ 
+         switch(d.key) {
+           case 0:
+             return "no staff";
+           case 1:
+             return d.key + " staff: " + d.value;
+             break;
+           case 5:
+             return ">5 staff: " + d.value;
+             break;
+           default:
+             return d.key + " staffs: " + d.value;
          }
        })
 			.dimension(dim)
@@ -406,23 +480,25 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
                 return count;
               }
               },{
-              "orderable": true,
-              "targets": 1,
-              data: "acronym",   
-              },{
               "searchable": false,
               "orderable": true,
-              "targets": 2,
-              data: "name",  
+              "targets": 1,
+              data: function (row, type, val, meta) { 
+                if (row.acronym) 
+                  return row.name+" ("+row.acronym +" )";
+                return row.name;
+                }
+              //data: "name",  
               },{
               "searchable": false,
               "orderable": true,
               "type":"num-fmt",
-              "targets": 3,
+              "targets": 2,
               "className": "number",
               "render": function ( data, type, row ) { 
                 if (data == "")
-                  return "<10k";
+                  return 0;
+                  //return "<10k";
                 return d3.format(",g")(data);
               },
               data: function (row, type, val, meta) { return getCost(row)}
@@ -430,8 +506,14 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
               "defaultContent":"AA",
               "searchable": false,
               "orderable": true,
-              "targets": 4,
+              "targets": 3,
               data: "meetings",  
+              },{
+              "defaultContent":"AA",
+              "searchable": false,
+              "orderable": true,
+              "targets": 4,
+              data: "fte",  
               },{
               "defaultContent":"AA",
               "searchable": false,
@@ -440,10 +522,11 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
               data: "accredited",  
               } 
             ],
+            "iDisplayLength" : 100,
             "bPaginate": true,
             "bLengthChange": false,
             "bFilter": false,
-            "order": [[ 4, "desc" ]],
+            "order": [[ 3, "desc" ]],
             "bSort": true,
             "bInfo": false,
             "bAutoWidth": false,
@@ -714,19 +797,24 @@ function eventpopup (epid) {
 					
 				</div>
 			</div>
-		</div>
 			<div class="row">
-				<div class="col-md-7 chart_box">
-					<h3>Country</h3>
+				<div class="col-md-4 chart_box">
+					<h3>Top countries</h3>
 					
 					<div class="country">
 					</div>
 					
 					<br class="clear" />
 				</div>
-				<div class="col-md-5 chart_box">
-					<h3>Date</h3>
-					<div class="date">
+				<div class="col-md-4 chart_box">
+					<h3>Lobbyists</h3>
+					<div class="nblobbyists">
+					</div>
+					<br class="clear" />
+				</div>
+				<div class="col-md-4 chart_box">
+					<h3>EP Badges</h3>
+					<div class="accreditations">
 					</div>
 					<br class="clear" />
 				</div>
@@ -762,11 +850,11 @@ function eventpopup (epid) {
 					<thead>
 						<tr class=header>
 							<th>Nr</th> 
-							<th>Accronym</th> 
 							<th>Name</th> 
-							<th>Cost declared</th> 
-							<th>Nb meetings</th> 
-							<th>Nb accredications</th> 
+							<th>Lobby Budget</th> 
+							<th>Meetings</th> 
+							<th>Lobbyists</th> 
+							<th>EP badges</th> 
 						</tr>
 					</thead>
 				</table>
@@ -781,8 +869,10 @@ function eventpopup (epid) {
 'use strict';
 	var events=[];
 	var representatives={};
+  var countries={};
+
 	$(function() {
-		var renderLoaded  = _.after(2,  function () { 
+		var renderLoaded  = _.after(3,  function () { 
 			//var dateFormat = d3.time.format("%d/%m/%Y");
 			var dateFormat = d3.time.format("%Y-%m-%d");
 			var now = Date.now();
@@ -802,6 +892,13 @@ function eventpopup (epid) {
 			});
 			grid ("#ec",representatives);
 		});
+		d3.csv("data/country.csv", function(d) {return d;}
+			,function(error, rows) {
+         _.each(rows, function(d) {
+           countries[d["id"]] = [d["code"],d["name"]];
+         });
+				 renderLoaded();
+			});      
 		d3.csv("data/meeting_flat.csv", function(d) {return d;}
 			,function(error, rows) {
 				 events = rows;
