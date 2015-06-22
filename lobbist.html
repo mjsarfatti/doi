@@ -6,6 +6,7 @@
 <title>EU Integrity Watch</title>
 <link rel="shortcut icon" href="favicon.ico">
 <link href="css/bower.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="css/dc.css"/>
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
 
@@ -18,18 +19,6 @@
 
 
 <script type="text/javascript" src="js/bower.js"></script>
-
-<style>
-td.number{text-align:right}
-
-td.dc-table-column._4,
-td.dc-table-column._5,
-td.dc-table-column._6
-{text-align:left;}
-
-#mep_number {
-		margin-top: 0.1em;}
-</style>
 
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@TI_EU" />
@@ -156,7 +145,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	drawExpense();
 	drawNbMeetings();
 	drawNbLobbyists();
-  drawNbBadges();
+  	drawNbBadges();
 	drawCountry();
 /*	drawDate();
 	drawMeetings();
@@ -164,17 +153,17 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	drawHost();
 	drawHostType();
 	drawGuest();
-  drawScore();
+  	drawScore();
 	drawParty();
 	drawRange();
 */
 
-		function rotateBarChartLabels(chart) {
-			chart.svg().selectAll('.axis.x text')
-				.style("text-anchor", "end" )
-				.attr("transform", function(d) { return "rotate(-45, -4, 9) "; });
+	function rotateBarChartLabels(chart) {
+		chart.svg().selectAll('.axis.x text')
+			.style("text-anchor", "end" )
+			.attr("transform", function(d) { return "rotate(-45, -4, 9) "; });
 
-		}
+	}
 
 	function drawCountry () {
 	var dim = ndx.dimension (function(d) {
@@ -196,14 +185,14 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 		var graph = dc.rowChart(".country")   
 			.margins({top: 0, right: 3, bottom: 20, left: 3})
-			.height(240)
-			.width(300)
-			.gap(1)
-      .fixedBarHeight(20)
+			.height(340)
+			//.width(300)
+			.gap(2)
+      		//.fixedBarHeight(20)
 			.x(d3.scale.ordinal())
 			.elasticX(true)
 			.colorCalculator(function(d, i) {
-				return "#f85631";
+				return "#ecb005";
 			})
 			.ordering(function(d){return -d.value})
 			.dimension(dim)
@@ -223,8 +212,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 	var graph = dc.bubbleChart (".expense")   
 //		.colorCalculator(function(d, i) { return blue;})
-	.width(660)
-		.height(300)
+		.width(750)
+		.height(380)
 		.margins({top: 20, right: 20, bottom: 20, left: 30})
 		.yAxisLabel("Nb Meetings")
 		.dimension(dim)
@@ -278,29 +267,35 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		});
 
 		var group   = dim.group().reduceSum(function(d) {   return 1; });
-
+		
+		var color = d3.scale.ordinal()
+		    .range(["#f9e5ad", "#f1ca58","#ecb007","#e7960e","#e37e17","#de631f"]);
+		
 		var chart = dc.pieChart(".meetings")
 			.innerRadius(50).radius(100)
 			.height(200)
 			.label(function(d){ 
-          if (d.key == 5)
-            return ">5";
-          return d.key })
+          	if (d.key == 5)
+            	return ">5";
+          	return d.key })
 			.title (function(d){ 
-         switch(d.key) {
-           case 0:
-             return "no meeting";
-           case 1:
-             return d.key + " meeting: " + d.value;
-             break;
-           case 5:
-             return ">5 meetings: " + d.value;
-             break;
-           default:
-             return d.key + " meetings: " + d.value;
-         }
-       })
+         		switch(d.key) {
+           			case 0:
+             			return "no meeting";
+           			case 1:
+             			return d.key + " meeting: " + d.value;
+            	 	break;
+           			case 5:
+             			return ">5 meetings: " + d.value;
+             		break;
+           				default:
+             		return d.key + " meetings: " + d.value;
+         		}
+       		})
 			.dimension(dim)
+			.colorCalculator(function(d, i) {
+				return color(d.key);
+			})
 			.group(group);
 	}
 
@@ -313,29 +308,35 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		});
 
 		var group   = dim.group().reduceSum(function(d) {   return 1; });
-
+		
+		var color = d3.scale.ordinal()
+		    .range(["#f9e5ad", "#f1ca58","#ecb007","#e7960e","#e37e17","#de631f"]);
+					
 		var chart = dc.pieChart(".accreditations")
 			.innerRadius(50).radius(100)
 			.height(200)
 			.label(function(d){ 
-          if (d.key == 5)
-            return ">5";
-          return d.key })
-			.title (function(d){ 
-         switch(d.key) {
-           case 0:
-             return "no accreditation";
-           case 1:
-             return d.key + " accreditation: " + d.value;
-             break;
-           case 5:
-             return ">5 accreditations: " + d.value;
-             break;
-           default:
-             return d.key + " accreditations: " + d.value;
-         }
+	          if (d.key == 5)
+	            return ">5";
+	          return d.key })
+				.title (function(d){ 
+	         switch(d.key) {
+	           case 0:
+	             return "no accreditation";
+	           case 1:
+	             return d.key + " accreditation: " + d.value;
+	             break;
+	           case 5:
+	             return ">5 accreditations: " + d.value;
+	             break;
+	           default:
+	             return d.key + " accreditations: " + d.value;
+	         }
        })
 			.dimension(dim)
+			.colorCalculator(function(d, i) {
+				return color(d.key);
+			})
 			.group(group);
 	}
 
@@ -379,12 +380,30 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		});
 
 		var group   = dim.group().reduceSum(function(d) {   return 1; });
-
+		
+		var lobby_category_colors = { //please note that Think tanks and churches have an extra space at the end of the string
+			"Corporate":"#cf270e",
+			"Consultants":"#d74517",
+			"Think tanks ":"#de6320",
+			"Municipal":"#e58a13",
+			"NGOs":"#ecb005",
+			"Churches ":"#f6d882",
+			
+			"Not mentioned":"#808080",
+			"Not registered":"#a6a6a6",
+			"Unknown":"#cccccc",
+			"Deregistered":"#f2f2f2"
+		}
+		
 		var chart = dc.pieChart(".main_category")
-			.innerRadius(20).radius(100)
+			.innerRadius(50).radius(100)
 			.height(200)
 			.label(function(d){ return mainCategories[d.key] })
 			.title (function(d){ return mainCategories[d.key] +" "+d.value })
+			.colorCalculator(function(d, i) {
+				//console.log(d)
+				return lobby_category_colors[mainCategories[d.key]];
+			})
 			.dimension(dim)
 			.group(group);
 	}
@@ -401,10 +420,30 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 			 group.all().forEach (function (d) {if (d.key[0]) t[d.key[0]]=d.key[1]})
 			 JSON.stringify(t);
 		*/
+		
+	var lobby_sector_colors = {	
+		"Companies & groups":"#cf270e",//Corporate
+		"Trade and business associations":"#cf270e",//Corporate
+		"Other organisations":"#cf270e",//Corporate
+		"Law firms":"#d74517",//Consultants
+		"Professional consultancies":"#d74517",//Consultants
+		"Self-employed consultants":"#d74517",//Consultants
+		"Non-governmental organisations, platforms and networks and similar":"#ecb005",//NGOs
+		"Think tanks and research institutions":"#de6320",//Think tanks
+		"Academic institutions":"#de6320",//Think tanks
+		"Organisations representing churches and religious communities":"#f6d882",//Churches
+		"Local, regional and municipal authorities (at sub-national level)":"#e58a13",//Municipal
+		"Other public or mixed entities, etc.":"#e58a13",//Municipal
+		
+		"Not mentioned":"#808080",
+		"Not registered":"#a6a6a6",
+		"Deregistered":"#cccccc",
+		"Unknown":"#f2f2f2"
+	}
 
 	var graph = dc.rowChart (".sector")   
 		.height(380)
-		.width(350)
+		//.width(350)
 		.gap(1)
 		.margins({top: 0, right: 0, bottom: 0, left: 0})
 		.x(d3.scale.ordinal())
@@ -413,8 +452,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		.elasticX(true)
 		.colorCalculator(function(d, i) {
 			if (d.key == "Not mentioned" || d.key == "Unknown" || d.key == "Not registered")
-				return "lightblue";
-			return "#f85631";
+				return "#cccccc";
+			return "#ecb005";
 		})
 		.dimension(dim)
 		.group(group)
@@ -670,34 +709,30 @@ function eventpopup (epid) {
 		
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li class="active" id="cm_tool_btn"><a href="#"><strong>EU</strong> Commission <br />meetings</a></li>
-					<li id="bl_tool_btn"><a href="#"><strong>EU</strong> Brussels <br />lobbyist</a></li>
-					<li id="mi_tool_btn"><a href="#"><strong>EU</strong> MEP <br />incomes</a></li>
+					<li id="cm_tool_btn"><a href="ec.html"><strong>Commission</strong> <br />meetings</a></li>
+					<li class="active" id="bl_tool_btn"><a href="lobbist.html"><strong>EU</strong><br />Lobbyists</a></li>
+					<li id="mi_tool_btn"><a href="ep.html"><strong>MEP</strong> <br />incomes</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="about.html">About</a></li>
-					<li><a href="contact.html">Contact</a></li>
 				</ul>
 			</div>
 	 </div><!-- container -->
 </nav>
-<div class="container_wrap cm_header" id="about_wrap_top">&nbsp;</div>
-<div class="container_wrap cm_header" id="about_wrap">
+<div class="container_wrap bl_header" id="about_wrap_top">&nbsp;</div>
+<div class="container_wrap bl_header" id="about_wrap">
 	<div class="container">
 		<div id="about_container" class="row">
 			<div class="col-md-3 col-lg-2" id="about_content_icon">
 			</div>
 			<div class="col-md-6 col-lg-7" id="about_content">
 				<p>
-					EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the activities of the commissionners and cabinet members in the European Commission.members of the European Parliament. By simply clicking on the graphs or the list below users can rank, sort and filter events.
-					<br/>
-					<a href="about.html" class="more">Read more</a>
-				</p>
+					EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the activities of the commissionners and cabinet members in the European Commission.members of the European Parliament.<br /><a href="about.html" class="more">Read more</a></p>
+					<p>By simply clicking on the graphs or the list below users can rank, sort and filter events.</p>
 			</div>
 			<div class="col-md-3" id="about_social">
 				<br/>
-				<!--
-				<a href="https://twitter.com/share" class="twitter-share-button" data-via="TI_EU" data-text="Want to know #events income & activities outside @Europarl_EN? Find out">Tweet</a>
+				<a href="https://twitter.com/share" class="twitter-share-button" data-via="TI_EU" data-text="Want to know #MEPs income & activities outside @Europarl_EN? Find out">Tweet</a>
 				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 				<br/>
 				<br/>
@@ -711,37 +746,38 @@ function eventpopup (epid) {
 					js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));</script>
--->
+
 			</div>
 		</div>
 		
 	</div><!-- container -->
 </div>
+
 <div class="container_wrap" id="toggle_about_wrap">
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-2 col-md-1 col-centered cm_collapse" id="collapse_about">
+			<div class="col-xs-2 col-md-1 col-centered bl_collapse" id="collapse_about">
 				<a class="opened" href="#">collapse</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="container_wrap" id="filter_wrap">
+<div class="container_wrap filter_bl" id="filter_wrap">
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
-				<p>Search or Filter:</p>
+				<p>Search or filter:</p>
 				<div class="input-group">
-						<input type="text" id="search-input" class="form-control input-lg" placeholder="type a name ...">
+						<input type="text" id="search-input" class="form-control input-lg" placeholder="Filter by Lobbyist, Host, Subject…">
 				</div>
 			</div>
 			<div class="col-sm-7 col-md-7" id="filter_numbers">
 				<div class="row">
-					<div class="col-md-2" id="currently_selected_text"><p>You have currently selected</p></div>
+					<div class="col-md-2" id="currently_selected_text"><p>Currently selected:</p></div>
 					<div class="col-md-3 filter_number">
 						<div id="mep_number" class="dc-data-count">
-							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong> organisations
+							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong><br />organisations
 						</div>
 					</div>
 					<div class="col-md-4 filter_number">
@@ -760,67 +796,69 @@ function eventpopup (epid) {
 <div id="ec">
 	<div class="container_wrap" id="main_charts_wrap">
 		<div class="container">
-			<h2>Charts</h2>
 			<div class="row">
-				<div class="col-md-4 chart_box">
-					<h3>Category of Lobby organisation</h3>
-					<div class="main_category"></div>
+				<div class="col-md-3 chart_box">
+					<h3>Top 10 Countries</h3>
+					<div class="country">
+					</div>
+					<br class="clear" />
+					<div class="label">Number of meetings</div>
+				</div>
+				<div class="col-md-3 chart_box" id="hosttype">
+					<h3>Accreditation<!--span class="info">info</span--></h3>
+					<div class="accreditations"></div>
 					<br class="clear" />
 				</div>
-				<div class="col-md-6 chart_box">
+				<div class="col-md-3 chart_box">
+					<h3>Number of meetings</h3>
+					<div class="meetings">
+					</div>
+				</div>
+				<div class="col-md-3 chart_box">
+					<h3>Category of Lobby organisation</h3>
+					<div class="main_category"></div>
+					<div class="legend">
+						<div class="corporate">Corporate</div>
+						<div class="consultants">Consultants</div>
+						<div class="think">Think Tanks</div>
+						<div class="municipal">Municipal</div>
+						<div class="ngos">NGOs</div>
+						<div class="churches">Churches</div>
+						<div class="not_mentioned">Not mentioned</div>
+						<div class="not_registered">Not registered</div>
+						<div class="unknown">Unknown</div>
+						<div class="deregistered">Deregistered</div>
+						<br class="clear" />
+					</div>
+					<br class="clear" />
+				</div>
+			</div>
+			<div class="row">
+				<!--<div class="col-md-3 chart_box">
+					<h3>Portfolio</h3>
+					<div class="host range chart-full"></div>
+					<br class="clear" />
+				</div>-->
+				<div class="col-md-8 chart_box">
+					<h3>Lobbying expense</h3>
+					<div class="expense">
+					</div>
+				</div>
+				<div class="col-md-4 chart_box">
 					<h3>Sector of Lobby organisation<!--span class="info">info</span--></h3>
 					<div class="sector range chart-full"></div>
 					<br class="clear" />
 				</div>
 			</div>
-			<a href="#" id="view_charts" class="hiddencharts">VIEW ALL THE CHARTS</a>
-		</div>
-		
-	</div>
-	
-	<div class="container_wrap" id="ihidden_charts_wrap">
-		<div class="container">
-				
 			<div class="row">
-				<div class="col-md-5 chart_box">
-					<h3>Nb meetings</h3>
-					
-					<div class="meetings">
+				<div class="col-md-12 chart_box">
+					<h3>Date</h3>
+					<div class="date">
 					</div>
-					
-				</div>
-				<div class="col-md-7 chart_box">
-					<h3>Lobbying expense</h3>
-					
-					<div class="expense">
-					</div>
-					
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4 chart_box">
-					<h3>Top countries</h3>
-					
-					<div class="country">
-					</div>
-					
-					<br class="clear" />
-				</div>
-				<div class="col-md-4 chart_box">
-					<h3>Lobbyists</h3>
-					<div class="nblobbyists">
-					</div>
-					<br class="clear" />
-				</div>
-				<div class="col-md-4 chart_box">
-					<h3>EP Badges</h3>
-					<div class="accreditations">
-					</div>
-					<br class="clear" />
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>	
 </div>
 
 
@@ -828,40 +866,23 @@ function eventpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="content" id="list_content">
-				<h2>Registered Lobbyists</h2>
-				<div class="info_chart" id="attendance_info">
-					<span class="info">info</span>
-					<p class="desc">Events</p>
-				</div>
-				
-				<div class="info_chart" id="EAI_info">
-					<span class="info">info</span>
-					<p class="desc">The External Activity Indicator was developed by Transparency International EU to provide a quick overview of all outside activities of members of the European Parliament. In short, the higher the indicator the higher the outside income and number of outside activities of a member. A higher EAI is reflected in a darker shading of orange. <br /><a href="about.html#methodology">More details</a></p>
-				</div>
-				
-				<div class="info_chart" id="OI_info">
-					<span class="info">info</span>
-					<p class="desc">Total monthly income declared by the member in the Declaration of Financial Interests</p>
-				</div>
+				<h2 class="table_title">Registered Lobbyists</h2><div id="last_update">Last updated: 11 March 2015</div>
 			</div>
 			
-			<div class="col-md-12 table-responsive">
 				<table class="table table-hover dc-data-grid tablesorter-bootstrap">
 					<thead>
 						<tr class=header>
-							<th>Nr</th> 
-							<th>Name</th> 
-							<th>Lobby Budget</th> 
-							<th>Meetings</th> 
-							<th>Lobbyists</th> 
-							<th>EP badges</th> 
+							<th class="header col-md-1">Nr</th> 
+							<th class="header col-md-5">Name</th> 
+							<th class="header">Lobby Budget</th> 
+							<th class="header">Meetings</th> 
+							<th class="header">Lobbyists</th> 
+							<th class="header">EP badges</th> 
 						</tr>
 					</thead>
 				</table>
 			</div>
 		</div>
-		
-		<div id="last_update">Last updated: 11 May 2015</div>
 	</div>
 </div>
 

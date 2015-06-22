@@ -17,6 +17,23 @@
 <![endif]-->
 <script src="jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+var MTUserId='7bacdeec-00ae-4450-bf23-75f7f74f9628';
+var MTFontIds = new Array();
+
+MTFontIds.push("739810"); // Helvetica® W02 Light 
+MTFontIds.push("739467"); // Helvetica® W02 Condensed Bold 
+(function() {
+var mtTracking = document.createElement('script');
+mtTracking.type='text/javascript';
+mtTracking.async='true';
+mtTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/lt/trackingCode.js';
+
+(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(mtTracking);
+})();
+</script>
+
 </head>
 <body>
 
@@ -36,9 +53,9 @@
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li id="cm_tool_btn"><a href="ec.html"><strong>EU</strong> Commission <br />meetings</a></li>
-					<li id="bl_tool_btn"><a href="el.html"><strong>EU</strong> Brussels <br />lobbyist</a></li>
-					<li id="mi_tool_btn"><a href="ep.html"><strong>EU</strong> MEP <br />incomes</a></li>
+					<li id="cm_tool_btn"><a href="ec.html"><strong>Commission</strong> <br />meetings</a></li>
+					<li id="bl_tool_btn"><a href="lobbist.html"><strong>EU</strong><br />Lobbyists</a></li>
+					<li id="mi_tool_btn"><a href="ep.html"><strong>MEP</strong> <br />incomes</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="about.html">About</a></li>
