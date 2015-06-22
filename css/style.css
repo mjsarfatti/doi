@@ -3,7 +3,8 @@
 	http://localhost:8888/transp_doi/doi/css/style.css
 	http://doi.ap:8888/doifork/css/style.css
 	http://localhost:8888/transp_doi/doifork/css/style.css
-	http://doi.ap:8888/doi/css/style.css */
+	http://doi.ap:8888/doi/css/style.css
+	http://doi.lattecreative.com/doi/css/style.css */
 
 @import url("http://fast.fonts.net/lt/1.css?apiType=css&c=7bacdeec-00ae-4450-bf23-75f7f74f9628&fontids=739810,739467");
 @font-face{
@@ -16,7 +17,6 @@ font-family:"Helvetica W02 Bd Cn";
 src:url("../fonts/739467/41d468de-0241-4086-8be4-21f7a002cf7d.eot?#iefix");
 src:url("../fonts/739467/41d468de-0241-4086-8be4-21f7a002cf7d.eot?#iefix") format("eot"),url("../fonts/739467/7da3dc49-a6ed-4109-a2da-c0ac6f52c294.woff2") format("woff2"),url("../fonts/739467/a986da64-fc96-499e-a852-8b33bf8d7825.woff") format("woff"),url("../fonts/739467/f4cc47e5-a53d-41f6-8719-87302b7e4a58.ttf") format("truetype"),url("../fonts/739467/7b6755aa-ec63-418c-9db9-088d83b0352e.svg#7b6755aa-ec63-418c-9db9-088d83b0352e") format("svg");
 }
->>>>>>> tttp/event
 
 
 /* GENERIC ELEMENTS */
@@ -300,7 +300,6 @@ ul.nav.navbar-right li.active a{
 }
 
 
->>>>>>> tttp/event
 @media only screen and (min-width : 768px) {
 	nav.navbar{
 		height: 80px;
@@ -1232,6 +1231,3 @@ ol li{
 ul li{
 	margin-bottom: 1em;
 }
-
->>>>>>> tttp/event
-
