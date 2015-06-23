@@ -102,37 +102,6 @@ var mainCategories = {"1":"Consultants","2":"Corporate","3":"NGOs","4":"Think ta
 
 var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Self-employed consultants","21":"Companies & groups","22":"Trade and business associations","23":"Trade unions","24":"Other organisations","31":"Non-governmental organisations, platforms and networks and similar","41":"Think tanks and research institutions","42":"Academic institutions","51":"Organisations representing churches and religious communities","61":"Local, regional and municipal authorities (at sub-national level)","62":"Other public or mixed entities, etc.","444":"Trade unions and professional associations","446":"Trade unions and professional associations","450":"Regional structures","458":"Other public or mixed entities, created by law whose purpose is to act in the public interest","466":"Trade unions and professional associations","469":"Trade unions and professional associations","477":"Other public or mixed entities, created by law whose purpose is to act in the public interest","480":"Trade unions and professional associations","501":"Trade unions and professional associations","504":"Other public or mixed entities, created by law whose purpose is to act in the public interest","506":"Trade unions and professional associations","508":"Trade unions and professional associations","5055":"Trade unions and professional associations","5060":"Trade unions and professional associations","5062":"Other public or mixed entities, created by law whose purpose is to act in the public interest","5065":"Trade unions and professional associations","5073":"Trade unions and professional associations","5074":"Regional structures","5075":"Trade unions and professional associations","5085":"Regional structures","5087":"Trade unions and professional associations","5089":"Trade unions and professional associations","5095":"Trade unions and professional associations","5099":"Transnational associations and networks of public regional or other sub-national authorities","5105":"Trade unions and professional associations","5110":"Trade unions and professional associations","5115":"Trade unions and professional associations","5130":"Trade unions and professional associations","5133":"Regional structures","5141":"Other public or mixed entities, created by law whose purpose is to act in the public interest","5157":"Transnational associations and networks of public regional or other sub-national authorities","5159":"Trade unions and professional associations","5171":"Trade unions and professional associations","5172":"Other public or mixed entities, created by law whose purpose is to act in the public interest","5197":"Regional structures","5205":"Trade unions and professional associations","5226":"Trade unions and professional associations","5227":"Trade unions and professional associations","5230":"Trade unions and professional associations","5256":"Trade unions and professional associations","5262":"Regional structures","5356":"Trade unions and professional associations","5371":"Trade unions and professional associations","5374":"Trade unions and professional associations","5390":"Regional structures","5400":"Trade unions and professional associations"};
 
-	var event = ndx.dimension(function(d) {
-		return d.id;    
-	})
-	var eventgroup   = event.group().reduceSum(function(d) {  return 1; });
-
-	var count=dc.dataCount(".dc-data-count")
-/*		.dimension(eventgroup)
-		.group({value: function() {
-						return eventgroup.all().filter(function(kv) { return kv.value>0; }).length;
-			}});
-*/
-		.dimension(ndx)
-		.group(all);
-
-	count.on("renderlet.resetall", function(c) {
-			var total=c.dimension().size();
-			var filtered= c.group().value();
-			var disabled= (total == filtered);
-
-      RefreshTable();
-
-			$(".resetall").attr("disabled",disabled);
-			ga && ga('send', 'event', 'filter', 'subset', filtered);
-
-			if (filtered >=0) {
-				var one2one=0;
-				eventgroup.all().forEach(function(d) { if(d.value ==1) one2one ++;});
-				var ratio=Math.round(100-one2one/filtered*100);
-				$(".one2one").html( ratio + "% collective meetings");
-			}
-	});
 
 
 	rep = ndx.dimension(function(d) {
@@ -146,15 +115,13 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	drawNbMeetings();
 	drawNbLobbyists();
   	drawNbBadges();
+  	drawCounter();
 	drawCountry();
 /*	drawDate();
 	drawMeetings();
 	drawWeekDay();
 	drawHost();
 	drawHostType();
-	drawGuest();
-  	drawScore();
-	drawParty();
 	drawRange();
 */
 
@@ -165,9 +132,81 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 	}
 
+  function drawCounter (){
+		var dim = ndx.dimension (function(d) {
+      return d.id;
+		});
+
+    var group   = dim.group().reduce(
+      function(p,d) {  
+        p.nb +=1;
+        p.fte = +d.fte;
+        p.accredited = +d.accredited;
+        p.cost = +getCost(d);
+        return p;
+      },
+      function(p,d) {  
+        p.nb -=1;
+        p.fte = d.fte;
+        p.accredited = +d.accredited;
+        p.cost = +getCost(d);
+        return p;
+      },
+      function(p,d) {  
+        return {nb:0,fte:0,accredited:0,cost:0}; 
+      }
+    );
+
+    group.order (function(p){return p.nb});
+    var fte=0;
+    var cost=0;
+    var accredited=0;
+  	var count = dc.dataCount(".org-count")
+		.dimension(group)
+		.group({value: function() {
+			return group.all().filter(function(kv) {
+        if (kv.value.nb >0) {
+          fte += +kv.value.fte;
+          accredited += +kv.value.accredited;
+          cost += +kv.value.cost;
+        }
+
+				return kv.value.nb>0; 
+			}).length;
+		}})
+	  .on("renderlet.all", function(c) {
+        $(".nbfte").html(fte);
+        $(".nbaccredited").html(accredited);
+        $(".nbcost").html(cost);
+        cost=0;
+        fte=0;
+        accredited=0;
+			var total=c.dimension().size();
+			var filtered= c.group().value();
+			var disabled= (total == filtered);
+
+      RefreshTable();
+
+			$(".resetall").attr("disabled",disabled);
+			ga && ga('send', 'event', 'filter', 'subset', filtered);
+
+			if (filtered >=0) {
+				var one2one=0;
+//				eventgroup.all().forEach(function(d) { if(d.value ==1) one2one ++;});
+//				var ratio=Math.round(100-one2one/filtered*100);
+//$(".one2one").html( ratio + "% collective meetings");
+			}
+	});
+
+  }
+
 	function drawCountry () {
 	var dim = ndx.dimension (function(d) {
-			return countries[d.contact_country][1];
+			c = countries[d.contact_country][1];
+			if(c == "Belgium"){
+				c = "Belgium / EU"
+			};
+			return c;
 	});
 
 	var group   = dim.group().reduceSum(function(d) {   
@@ -186,9 +225,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		var graph = dc.rowChart(".country")   
 			.margins({top: 0, right: 3, bottom: 20, left: 3})
 			.height(340)
-			//.width(300)
 			.gap(2)
-      		//.fixedBarHeight(20)
 			.x(d3.scale.ordinal())
 			.elasticX(true)
 			.colorCalculator(function(d, i) {
@@ -204,11 +241,33 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 	function drawExpense () {
 		var dim = ndx.dimension (function(d) {
-      return [getCost(d),d.meetings];
+      if (d.meetings + d.accredited)
+        return d.id;
+      return "";
 	});
 
-	var group   = dim.group().reduceSum(function(d) {   
-			return 1; });
+  var group   = dim.group().reduce(
+      function(p,d) {  
+        p.nb +=1;
+        p.fte += +d.fte;
+        p.accredited += +d.accredited;
+        p.cost += +getCost(d);
+        p.meetings += +d.meetings;
+        return p;
+      },
+      function(p,d) {  
+        p.nb -=1;
+        p.fte += d.fte;
+        p.accredited += +d.accredited;
+        p.cost-= +getCost(d);
+        p.meetings -= +d.meetings;
+        return p;
+      },
+      function(p,d) {  
+        return {nb:0,fte:0,accredited:0,cost:0, meetings:0}; 
+      }
+    )
+    .order(function (p) {return p.nb});
 
 	var graph = dc.bubbleChart (".expense")   
 //		.colorCalculator(function(d, i) { return blue;})
@@ -219,14 +278,14 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		.dimension(dim)
 		.group(group)
 		.keyAccessor(function (d) {
-        return d.key[0];
+        return d.value.cost;
 		})
 		.valueAccessor(function (d) {
-				return d.key[1];
+				return d.value.meetings;
 		})
 		.radiusValueAccessor(function (d) {
-        if (d.value > 40) return 40;
-				return d.value+2;
+        if (d.value.fte  > 40) return 40;
+				return d.value.fte;
 		})
 		.x(d3.scale.linear().domain([0, 10000000]))
 		.y(d3.scale.linear().domain([0, 40]))
@@ -463,47 +522,6 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 
 
-	function drawGuest () {
-		var dim = ndx.dimension (function(d) {
-			return d.guest;
-		});
-		var group   = dim.group().reduceSum(function(d) {   return 1; });
-
-		var filteredGroup = (function(source_group) {
-			return {
-				all: function() {
-					return source_group.top(10).filter(function(d) {
-						return (d.key != "Not mentioned" && d.value != 0);
-					});
-				}
-			};
-		})(group);
-
-		var graph = dc.rowChart(".guest")   
-			.margins({top: 0, right: 3, bottom: 20, left: 3})
-			.height(240)
-			//.width(360)
-			.gap(1)
-			.x(d3.scale.ordinal())
-			.elasticX(true)
-			.colorCalculator(function(d, i) {
-				return "#f85631";
-			})
-			.ordering(function(d){return -d.value})
-			.dimension(dim)
-			.group(filteredGroup);
-
-		graph.xAxis().ticks(5).tickFormat(d3.format("d"));
-
-		var count = dc.dataCount(".org-count")
-			.dimension(group)
-			.group({value: function() {
-				return group.all().filter(function(kv) {
-					return kv.value>0; 
-				}).length;
-			}});
-
-	};
 
 	function drawTable () {
 		var count=0;
@@ -576,6 +594,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
     function format (d) {
       var s="<div>More details on:";
+      if (!d.code)
+        return "Data missing to display";
       s += '<div class="btn-group" qdata-toggle="buttons">';
       s += "<button class='btn btn-sm btn-primary' data-type='event'>Events</button>";
       s += "<button class='btn btn-sm btn-primary' data-type='accreditation'>Accreditations</button>";
@@ -715,6 +735,7 @@ function eventpopup (epid) {
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="about.html">About</a></li>
+					<li><a href="contact.html">Contact</a></li>
 				</ul>
 			</div>
 	 </div><!-- container -->
@@ -723,12 +744,12 @@ function eventpopup (epid) {
 <div class="container_wrap bl_header" id="about_wrap">
 	<div class="container">
 		<div id="about_container" class="row">
-			<div class="col-md-2 col-lg-3" id="about_content_icon">
+			<div class="col-md-3 col-lg-3" id="about_content_icon">
 			</div>
-			<div class="col-md-7 col-lg-6" id="about_content">
-				<p>
-					EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the activities of the commissionners and cabinet members in the European Commission.members of the European Parliament.<br /><a href="about.html" class="more">Read more</a></p>
-					<p>By simply clicking on the graphs or the list below users can rank, sort and filter events.</p>
+			<div class="col-md-6 col-lg-6" id="about_content">
+				<p>EU Integrity Watch is a user-friendly interactive database that provides a unique overview of the lobby organisations registered in the EU Transparency Register – the register of Brussels lobbyists.
+				<br /><a href="about.html" class="more">Read more</a></p>
+					<p>By simply clicking on the graphs or the list below users can rank, sort and filter the meetings.</p>
 			</div>
 			<div class="col-md-3" id="about_social">
 				<br/>
@@ -769,21 +790,26 @@ function eventpopup (epid) {
 			<div class="col-xs-9 col-sm-9 col-md-4" id="filter_field_container">
 				<p>Search or filter:</p>
 				<div class="input-group">
-						<input type="text" id="search-input" class="form-control input-lg" placeholder="Filter by Lobbyist, Host, Subject…">
+					<input type="text" id="search-input" class="form-control input-lg" placeholder="Filter by Lobbyist, Host, Subject">
 				</div>
 			</div>
 			<div class="col-sm-7 col-md-7" id="filter_numbers">
 				<div class="row">
 					<div class="col-md-2" id="currently_selected_text"><p>Currently selected:</p></div>
-					<div class="col-md-3 filter_number">
-						<div id="mep_number" class="dc-data-count">
-							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong><br />organisations
+					<div class="col-md-2 filter_number">
+						<div id="mep_number" class="dc-data-count org-count">
+							<span id="abig_number" class="big_number filter-count"></span>out of <strong class="total-count"></strong> organisations
 						</div>
 					</div>
-					<div class="col-md-4 filter_number">
-						<div class="filter_long one2one"></div>
-						<div class="filter_long civilsociety"></div>
-					</div>
+					<div class="col-md-2 filter_number">
+            			<div title="full time equivalent"><span class="big_number afilter_long nbfte"></span> Lobbyists</div>
+            		</div>
+            		<div class="col-md-2 filter_number">
+            			<div title="full time equivalent"><span class="big_number afilter_long nbcost"></span> Lobby budget</div>
+            		</div>
+            		<div class="col-md-2 filter_number">
+            			<div title="access badges to the European Parliament"><span class="big_number afilter_long nbaccredited"></span> EP badges</div>
+            		</div>
 				</div>
 			</div>
 			<div class="col-xs-3 col-sm-3 col-md-1" id="resetall_container">
@@ -802,7 +828,7 @@ function eventpopup (epid) {
 					<div class="country">
 					</div>
 					<br class="clear" />
-					<div class="label">Number of meetings</div>
+					<div class="label">Number of contacts</div>
 				</div>
 				<div class="col-md-3 chart_box" id="hosttype">
 					<h3>Accreditation<!--span class="info">info</span--></h3>
@@ -810,7 +836,7 @@ function eventpopup (epid) {
 					<br class="clear" />
 				</div>
 				<div class="col-md-3 chart_box">
-					<h3>Number of meetings</h3>
+					<h3>Number of contacts</h3>
 					<div class="meetings">
 					</div>
 				</div>
@@ -866,18 +892,19 @@ function eventpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="content" id="list_content">
-				<h2 class="table_title">Registered Lobbyists</h2><div id="last_update">Last updated: 11 March 2015</div>
+				<h2 class="table_title">Registered Lobby Organisations</h2><div id="last_update">Last updated: 11 March 2015</div>
 			</div>
 			
+			<div class="col-md-12 table-responsive">
 				<table class="table table-hover dc-data-grid tablesorter-bootstrap">
 					<thead>
 						<tr class=header>
-							<th class="header col-md-1">Nr</th> 
-							<th class="header col-md-5">Name</th> 
-							<th class="header">Lobby Budget</th> 
-							<th class="header">Meetings</th> 
-							<th class="header">Lobbyists</th> 
-							<th class="header">EP badges</th> 
+							<th class="col-md-1">Nr</th> 
+							<th class="col-md-5">Name</th> 
+							<th>Meetings</th>
+							<th>EP badges</th>
+							<th>Lobbyists</th> 
+							<th>Lobby Budget</th> 							
 						</tr>
 					</thead>
 				</table>
