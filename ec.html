@@ -13,7 +13,52 @@
 
 
 <script type="text/javascript" src="js/bower.js"></script>
+<script>
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "date-eu-pre": function ( date ) {
+        date = date.replace(" ", "");
+         
+        if ( ! date ) {
+            return 0;
+        }
+ 
+        var year;
+        var eu_date = date.split(/[\.\-\/]/);
+ 
+        /*year (optional)*/
+        if ( eu_date[2] ) {
+            year = eu_date[2];
+        }
+        else {
+            year = 0;
+        }
+ 
+        /*month*/
+        var month = eu_date[1];
+        if ( month.length == 1 ) {
+            month = 0+month;
+        }
+ 
+        /*day*/
+        var day = eu_date[0];
+        if ( day.length == 1 ) {
+            day = 0+day;
+        }
+ 
+        return (year + month + day) * 1;
+    },
+ 
+    "date-eu-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "date-eu-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+} );
 
+
+</script>
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the pdate via file:// -->
 <!--[if lt IE 9]>
@@ -126,7 +171,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 
 
-	var evt = ndx.dimension(function(d) {
+	evt = ndx.dimension(function(d) {
 		return d.id;    
 	})
   var eventgroup   = evt.group().reduce(
@@ -182,7 +227,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		.group(all);
 
 
-	var name = ndx.dimension(function(d) {
+	nameEvent = ndx.dimension(function(d) {
 			if (d.guest) {
 					if (representatives[d.guestid])
 						return d.title.toLowerCase()+" "+d.host.toLowerCase()+" "+d.guest.toLowerCase()+ " "+representatives[d.guestid].acronym.toLowerCase()+ " ";   
@@ -303,7 +348,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 	function drawMainCategory () {
 		function getName (d) {
 			if (d.status == "dereg") {
-				return [97,"Deregistered"];
+				return [100,"Unknown"];
       } 
 			if (!d.guestid){
 				if (d.unregistered == "")
@@ -363,7 +408,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 				return "Not registered";
 			}
 			if (d.status=="dereg")
-				return "Deregistered";
+				return "Unknown";
 			if (!representatives[d.guestid])
 				return "Unknown";
 			sub=representatives[d.guestid].sub_category;
@@ -396,7 +441,8 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 		"Transnational public networks":"#e58a13",//Municipal
 		"Other public or mixed entities":"#e58a13",//Municipal
 
-		"Unknown":"#cccccc"
+		"Unknown":"#cccccc",
+		"Deregistered":"#cccccc"
 	}
 
 	var graph = dc.rowChart (".sector")   
@@ -452,7 +498,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 
 			"Vice-President Jyrki Katainen" : "Jobs & Growth",
 
-	"Claus Sørensen":"Humanitarian Aid",
+	"Director-General Claus Sørensen":"Humanitarian Aid",
 	"Commissioner Christos Stylianides":"Humanitarian Aid",
 
 	"Commissioner Corina Crețu":"Regional Policy",
@@ -797,6 +843,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
               "data": function(d) {
                  if (d.date == null) return "canceled";
                    return d.date.getDate()+"/"+(1+d.date.getMonth())+"/"+d.date.getFullYear();
+                   //return d.date.getFullYear()+"-"+(1+d.date.getMonth())+"-"+d.date.getDate();
                 },
               },{
               "defaultContent":"AA",
@@ -824,10 +871,6 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
                 return "<span title='"+d.cost_absolute+"'>"+d.guest +"</span>";
 
 					     }
-             },{
-					    data: "participants",
-              "orderable": true,
-              "targets": 6,
               } 
             ],
             "iDisplayLength" : 100,
@@ -839,7 +882,7 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
             "bInfo": false,
             "bAutoWidth": false,
             "bDeferRender": true,
-            "aaData": evt.top(Infinity),
+            "aaData": nameEvent.top(Infinity),
             "bDestroy": true,
         });
         	
@@ -867,12 +910,15 @@ var subCategories = {"11":"Professional consultancies","12":"Law firms","13":"Se
 //    		$('#lobbyist'+d.guestid).html(sl);
 //    	}); 
     	            	
+      if (!d)
+        return "no data";
     	s  = "<div class='l_data_container'>";
     	s += "<div class='l_name'><label>Title</label> "+d.title+"</div>";
     	s += "<div class='l_name'><label>Date</label> "+d.date+"</div>";
     	s += "<div class='l_name'><label>Cabinet</label> "+d.cabinet+"</div>";
     	s += "<div class='l_name'><label>Host</label> "+d.host+"</div>";
     	s += "<div class='l_category'><label>Guest</label> "+representatives[d.guestid].name+"</div>";
+    	s += "<div class='l_category'><label>Nb Participants</label> "+d.participants+"</div>";
 //    	s += "<span class='lobbyist_info_container' id='lobbyist"+d.guestid+"'></span>"
     	s += "</div>";
     	return s;
@@ -1338,10 +1384,14 @@ function eventpopup (epid) {
 						</div>
 					</div>
 					<div class="col-md-2 filter_number">
-            			<div title="full time equivalent"><span class="big_number afilter_long nbfte"></span> out of <strong>8,047</strong><br /> Lobbyists</div>
+            			<div title="full time equivalent"><span class="big_number afilter_long nbfte"></span> 
+ Lobbyists
+</div>
 					</div>
 					<div class="col-md-4 filter_number">
-						<div title="access badges to the European Parliament"><span class="big_number afilter_long nbaccredited"></span>  out of <strong>3,438</strong> Lobbyists accredited with the European Parliament</div>
+						<div title="access badges to the European Parliament"><span class="big_number afilter_long nbaccredited"></span>
+  Lobbyists accredited with the European Parliament
+</div>
 						</div>
 					</div>
 				</div>
@@ -1406,7 +1456,12 @@ function eventpopup (epid) {
 						</div>
 						
 						<div class="col-md-6 chart_box" id="main_category">
-							<h3>Category</h3>
+							<h3>Category of Lobby organisation</h3>
+							<div class="info_chart">
+								<span class="info">info</span>
+								<p class="desc">The classifications in this graph reflect the categories established by the EU Transparency Register. Names have been shortened. The shares of the pie reflect the number of registered organisations per category.
+								</p>
+							</div>
 							<div class="main_category"></div>
 							<div class="legend">
 								<div class="corporate">Corporate</div>
@@ -1500,7 +1555,13 @@ function eventpopup (epid) {
 	<div class="container">
 		<div class="row">
 			<div class="content" id="list_content">
-				<h2 class="table_title">Lobby Meetings of the European Commission</h2><div id="last_update">Last updated: 23 June 2015</div>
+				<h2 class="table_title">Lobby Meetings of the European Commission 
+					<div class="info_chart">
+						<span class="info">info</span>
+						<p class="desc">Click on any meeting for additional information.
+						</p>
+					</div>
+				</h2><div id="last_update">Last updated: 23 June 2015</div>
 			</div>
 			
 			<div class="col-md-12 table-responsive">
@@ -1513,7 +1574,6 @@ function eventpopup (epid) {
 							<th class="header">Date</th> 
 							<th class="header col-md-4">Subject</th> 
 							<th class="header">Lobby Organisation</th> 
-							<th class="header">Participants</th> 
 						</tr>
 					</thead>
 				</table>
@@ -1527,6 +1587,7 @@ function eventpopup (epid) {
 'use strict';
 	var events=[];
   var evt=null;
+  var nameEvent=null;
 	var representatives={};
 	$(function() {
 		var renderLoaded  = _.after(2,  function () { 
@@ -1537,6 +1598,8 @@ function eventpopup (epid) {
 
 			_.each (events, function (d) {
 				d.date=dateFormat.parse(d.date);
+        if(d.host == "Claus Sørensen")
+          d.host="Director-General "+d.host;
 				if (!d.cabinet) 
 					return;
         if (!d.guest && d.guestid){
@@ -1545,7 +1608,7 @@ function eventpopup (epid) {
           } else {
             d.guest ="Unknown";
           }
-        } 
+        }
 				if (d.cabinet.substr(19)=="Cabinet member of ")
 					d.cabinet = d.cabinet.substr(19);
 			});
@@ -1570,7 +1633,7 @@ function eventpopup (epid) {
 
 	$("#search-input").keyup (function () {
 		var s = $(this ).val().toLowerCase();
-		wall.dimension().filter(function (d) { 
+		nameEvent.filter(function (d) { 
 			return d.indexOf (s) !== -1;} );
 		$(".resetall").attr("disabled",false);
 		throttle();
@@ -1609,6 +1672,8 @@ function eventpopup (epid) {
 
 	ga('create', 'UA-55613514-1', 'auto');
 	ga('send', 'pdateview');
+
+
 
 </script>
 </body>
